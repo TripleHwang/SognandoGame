@@ -9,6 +9,7 @@ public class Lazercast : MonoBehaviour
     //public GameObject RayResult; //충돌하는 위치에 출력할 결과
     // Start is called before the first frame update
     public LayerMask isLayer;
+    public string kindOfBullet = "Lazer";
     void Start()
     {
         Invoke("DestroyBullet",0.1f);

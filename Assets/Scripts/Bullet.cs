@@ -7,6 +7,8 @@ public class Bullet : MonoBehaviour
     public float distance;
     public LayerMask isLayer;
     public float speed;
+
+    public string kindOfBullet = "bullet";
     // Start is called before the first frame update
     void Start()
     {

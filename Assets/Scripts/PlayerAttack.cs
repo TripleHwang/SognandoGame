@@ -8,10 +8,12 @@ public class PlayerAttack : MonoBehaviour
     private float shootDelayDeltaTime = 0;
     public GameObject bullet;
     public Transform pos;
+    private string bulletKind;
     // Start is called before the first frame update
+    Lazercast lz;
     void Start()
     {
-        
+        bulletKind = bullet.GetComponent<Lazercast>().kindOfBullet;
     }
 
     // Update is called once per frame
@@ -22,11 +24,19 @@ public class PlayerAttack : MonoBehaviour
         transform.rotation = Quaternion.Euler(0,0,z);
         if(Input.GetMouseButton(0) && PlayerMove.underAttack == false)
         {
-            Reload();
-            Shoot();
+            if(bulletKind == "Lazer")
+            {
+                Debug.Log(bulletKind);
+                LazerShoot();
+            }
+            else if(bulletKind == "bullet")
+            {
+                Reload();
+                BulletShoot();                
+            }
         }
     }
-    void Shoot()
+    void BulletShoot()
     {
         if(shootDelayDeltaTime < shootDelay){
             return;
@@ -38,5 +48,9 @@ public class PlayerAttack : MonoBehaviour
     void Reload()
     {
         shootDelayDeltaTime += Time.deltaTime;
+    }
+
+    void LazerShoot(){
+        Instantiate(bullet, pos.position, transform.rotation);
     }
 }
