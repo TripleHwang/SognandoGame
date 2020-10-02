@@ -9,11 +9,13 @@ public class PlayerAttack : MonoBehaviour
     public GameObject bullet;
     public Transform pos;
     private string bulletKind;
+    private GameObject instantBullet;
+    private bool isLazer = false;
     // Start is called before the first frame update
-    Lazercast lz;
     void Start()
     {
-        bulletKind = bullet.GetComponent<Lazercast>().kindOfBullet;
+        bulletKind = bullet.name;
+        Debug.Log(bulletKind);
     }
 
     // Update is called once per frame
@@ -24,15 +26,22 @@ public class PlayerAttack : MonoBehaviour
         transform.rotation = Quaternion.Euler(0,0,z);
         if(Input.GetMouseButton(0) && PlayerMove.underAttack == false)
         {
-            if(bulletKind == "Lazer")
+            if(bulletKind == "Lazercast")
             {
                 Debug.Log(bulletKind);
                 LazerShoot();
             }
-            else if(bulletKind == "bullet")
+            else if(bulletKind == "Bullet" || bulletKind == "BulletMass" || bulletKind == "Shotgun")
             {
                 Reload();
                 BulletShoot();                
+            }
+        }
+        if(Input.GetMouseButtonUp(0) || PlayerMove.underAttack == true)
+        {
+            if(bulletKind == "Lazercast")
+            {
+                DestroyLazer();
             }
         }
     }
@@ -41,7 +50,7 @@ public class PlayerAttack : MonoBehaviour
         if(shootDelayDeltaTime < shootDelay){
             return;
         }
-        Instantiate(bullet, pos.position, transform.rotation);
+        instantBullet = (GameObject)Instantiate(bullet, pos.position, transform.rotation);
         shootDelayDeltaTime = 0;
     }
 
@@ -50,7 +59,23 @@ public class PlayerAttack : MonoBehaviour
         shootDelayDeltaTime += Time.deltaTime;
     }
 
-    void LazerShoot(){
-        Instantiate(bullet, pos.position, transform.rotation);
+    void LazerShoot()
+    {
+        if(isLazer == false)
+        {
+            instantBullet = (GameObject)Instantiate(bullet, pos.position, transform.rotation);
+            isLazer = true;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    void DestroyLazer()
+    {
+        Debug.Log("Lazercut");
+        Destroy(instantBullet);
+        isLazer = false;
     }
 }

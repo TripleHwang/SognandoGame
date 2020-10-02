@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour
     // Start is called before the first frame update
 
     void Update() {
-        if(Input.GetButtonDown("Jump") && !animator.GetBool("isJumping"))
+        if(Input.GetButtonDown("Jump") && !animator.GetBool("isJumping") && underAttack == false)
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             animator.SetBool("isJumping", true);
@@ -71,6 +71,7 @@ public class PlayerMove : MonoBehaviour
                 animator.SetBool("isJumping", false);
         }
     }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Trap")
