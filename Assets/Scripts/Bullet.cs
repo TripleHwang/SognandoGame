@@ -6,7 +6,10 @@ public class Bullet : MonoBehaviour
 {
     public float distance;
     public LayerMask isLayer;
+    [SerializeField] LayerMask enemyLayer;
+    Transform m_tftarget = null;
     public float speed;
+    float currentSpeed = 0f;
     public string kindOfBullet;
     private GameObject Player;
     public GameObject Raybody; //레이캐스팅을 쏘는 위치
@@ -18,6 +21,9 @@ public class Bullet : MonoBehaviour
         Player = GameObject.Find("bulletpos");
         if(kindOfBullet == "Bullet"){
             Invoke("DestroyBullet",2);
+        }
+        else if(kindOfBullet == "Missile"){
+            SearchEnemy();
         }
     }
 
@@ -34,6 +40,13 @@ public class Bullet : MonoBehaviour
             this.transform.rotation = Player.transform.rotation;
             ShootLazer();
         }
+        else if(kindOfBullet == "Missile")
+        {
+            if(m_tftarget != null)
+                FollowUp();
+            else
+                ShootBullet();
+        }
     }
 
     void DestroyBullet()
@@ -47,7 +60,7 @@ public class Bullet : MonoBehaviour
         enemyMove.OnDamaged();
     }
 
-        void ShootBullet()
+    void ShootBullet()
     {
         Debug.Log("ASDF");
         RaycastHit2D ray = Physics2D.Raycast(transform.position,transform.right,distance,isLayer);
@@ -78,6 +91,37 @@ public class Bullet : MonoBehaviour
         }
         else{
             ScaleDistance.transform.localScale = new Vector2(20, 1);
+        }
+    }
+
+    void SearchEnemy()
+    {
+        Collider2D t_col = Physics2D.OverlapCircle(transform.position, 100f, enemyLayer);
+        if(t_col != null)
+        {
+            m_tftarget = t_col.transform;
+        }
+    }
+
+    void FollowUp()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(transform.position,transform.right,distance,isLayer);
+        if(ray.collider != null)
+        {
+            if(ray.collider.tag == "Enemy")
+            {
+                OnAttack(ray.collider.transform);
+            }
+            DestroyBullet();
+        }
+        if(m_tftarget != null)
+        {
+            if(currentSpeed <= speed)
+                currentSpeed += speed * Time.deltaTime;
+            transform.position += transform.right * currentSpeed * Time.deltaTime;
+
+            Vector2 t_dir = (m_tftarget.position - transform.position).normalized;
+            transform.right = Vector2.Lerp(transform.right, t_dir, 0.25f);
         }
     }
 }

@@ -31,7 +31,7 @@ public class PlayerAttack : MonoBehaviour
                 Debug.Log(bulletKind);
                 LazerShoot();
             }
-            else if(bulletKind == "Bullet" || bulletKind == "BulletMass" || bulletKind == "Shotgun")
+            else if(bulletKind == "Bullet" || bulletKind == "BulletMass" || bulletKind == "Shotgun" || bulletKind == "Missile")
             {
                 Reload();
                 BulletShoot();                
