@@ -8,6 +8,9 @@ public class Bullet : MonoBehaviour
     public LayerMask isLayer;
     [SerializeField] LayerMask enemyLayer;
     Transform m_tftarget = null;
+    GameObject[] enemys;
+    List<Transform> enemyTrs;
+    float[] bulletEnemyDistance;
     public float speed;
     float currentSpeed = 0f;
     public string kindOfBullet;
@@ -23,6 +26,12 @@ public class Bullet : MonoBehaviour
             Invoke("DestroyBullet",2);
         }
         else if(kindOfBullet == "Missile"){
+            enemys = GameObject.FindGameObjectsWithTag("Enemy");
+            enemyTrs = new List<Transform>();
+            bulletEnemyDistance = new float[enemys.Length];
+            for(int i = 0; i < enemys.Length; i++){
+                enemyTrs.Add(enemys[i].GetComponent<Transform>());
+            }
             SearchEnemy();
         }
     }
@@ -56,21 +65,25 @@ public class Bullet : MonoBehaviour
 
     void OnAttack(Transform enemy)
     {
-        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
-        enemyMove.OnDamaged();
+        Golem golem = enemy.GetComponent<Golem>();
+        golem.OnDamaged();
     }
 
     void ShootBullet()
     {
-        Debug.Log("ASDF");
         RaycastHit2D ray = Physics2D.Raycast(transform.position,transform.right,distance,isLayer);
         if(ray.collider != null)
         {
-            if(ray.collider.tag == "Enemy")
+            if(ray.collider.tag == "EnemyHit")
             {
-                OnAttack(ray.collider.transform);
+                Debug.Log("ASDF");
+                OnAttack(ray.collider.transform.parent.transform);
+                DestroyBullet();
             }
-            DestroyBullet();
+            else if(ray.collider.tag == "Platform"){
+                DestroyBullet();
+            }
+            
         }
         transform.Translate(Vector2.right * speed * Time.deltaTime);
     }
@@ -96,11 +109,28 @@ public class Bullet : MonoBehaviour
 
     void SearchEnemy()
     {
-        Collider2D t_col = Physics2D.OverlapCircle(transform.position, 100f, enemyLayer);
-        if(t_col != null)
+        int targetInt = 0;
+        for (int i = 0; i < enemyTrs.Count; i++)
         {
-            m_tftarget = t_col.transform;
+            bulletEnemyDistance[i] = Mathf.Abs(Vector2.Distance(enemyTrs[i].position, transform.position));
         }
+        m_tftarget = enemyTrs[targetInt];
+        for(int i = 0; i< enemyTrs.Count; i++)
+        {
+            if(enemyTrs[i].gameObject.GetComponent<EnemyMove>().isdie == true){
+                m_tftarget = null;
+                enemyTrs.RemoveAt(i);
+                return;
+            }
+            if(bulletEnemyDistance[targetInt] < bulletEnemyDistance[i]){
+                m_tftarget = enemyTrs[targetInt];
+            }
+            else{
+                targetInt = i;
+                m_tftarget = enemyTrs[targetInt];
+            }
+        }
+        targetInt = 0;
     }
 
     void FollowUp()
@@ -111,6 +141,7 @@ public class Bullet : MonoBehaviour
             if(ray.collider.tag == "Enemy")
             {
                 OnAttack(ray.collider.transform);
+                m_tftarget = null;
             }
             DestroyBullet();
         }
