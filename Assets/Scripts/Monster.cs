@@ -15,6 +15,7 @@ public class Monster : MonoBehaviour
     public bool isGround = true;
     public bool canAtk = true;
     public bool MonsterDirRight;
+    Rigidbody2D rigid;
 
     protected Rigidbody2D rb;
     protected BoxCollider2D boxCollider;
@@ -22,6 +23,7 @@ public class Monster : MonoBehaviour
     public GameObject healthBar;
     public Animator Anim;
     public LayerMask layerMask;
+    SpriteRenderer spriteRenderer;
 
     Vector3 healthbarSize;
     // Start is called before the first frame update
@@ -31,6 +33,9 @@ public class Monster : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         Anim = GetComponent<Animator>();
         healthbarSize = healthBar.transform.localScale;
+        rigid = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
 
         StartCoroutine(CalcCoolTime());
         StartCoroutine(ResetCollider());
@@ -103,19 +108,30 @@ public class Monster : MonoBehaviour
     }
 
     public void TakeDamage(int dam){
+        spriteRenderer.color = new Color(1,1,1,0.4f);
         Debug.Log("Damaged");
         currentHP -= (float)dam;
         Debug.Log(currentHP);
         isHit = true;
         healthbarSize.x = currentHP / fullHP * healthbarSize.x;
         healthBar.transform.localScale = healthbarSize;
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        if(currentHP <= 0){
+            boxCollider.enabled = false;
+            spriteRenderer.flipY = true;
+            Invoke("die", 1);
+        }
 
         hitBoxCollider.SetActive(false);
     }
 
+    public void die(){
+        gameObject.SetActive(false);
+    }
+
     protected void OnTriggerEnter2D(Collider2D collision) {
-        /*if(collision.transform.CompareTag()){
+        if(collision.transform.CompareTag("playerBullet")){
             TakeDamage(1);
-        }*/
+        }
     }
 }
