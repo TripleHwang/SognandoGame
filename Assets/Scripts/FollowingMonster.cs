@@ -50,7 +50,7 @@ public class FollowingMonster : Monster
         while(runTime >= 0f){
             runTime -= Time.deltaTime;
             if(!isHit){
-                MyAnimSetTrigger("Walk");
+                MyAnimSetTrigger("Walking");
                 rb.velocity = new Vector2(-transform.localScale.x * moveSpeed , rb.velocity.y);
 
                 if(!Physics2D.OverlapCircle(wallCheck[0].position,0.01f, layerMask) &&
@@ -83,7 +83,7 @@ public class FollowingMonster : Monster
             boxCollider.offset = boxColliderJumpOffset;
             canAtk = false;
             rb.velocity = new Vector2(-transform.localScale.x * 10f, jumpPower / 1.25f);
-            //MyAnimSetTrigger("Attack");
+            MyAnimSetTrigger("Jump");
             yield return Delay500;
             currentState = State.Idle;
         }
@@ -96,7 +96,7 @@ public class FollowingMonster : Monster
         boxCollider.offset = boxColliderJumpOffset;
 
         rb.velocity = new Vector2(-transform.localScale.x * 6f, jumpPower / 1.3f);
-        //MyAnimSetTrigger("Attack");
+        MyAnimSetTrigger("Jump");
         yield return Delay500;
         currentState = State.Idle;
     }

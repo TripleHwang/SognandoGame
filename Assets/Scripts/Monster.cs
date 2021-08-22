@@ -15,7 +15,7 @@ public class Monster : MonoBehaviour
     public bool isGround = true;
     public bool canAtk = true;
     public bool MonsterDirRight;
-    Rigidbody2D rigid;
+    public Rigidbody2D rigid;
 
     protected Rigidbody2D rb;
     protected BoxCollider2D boxCollider;
@@ -23,7 +23,7 @@ public class Monster : MonoBehaviour
     public GameObject healthBar;
     public Animator Anim;
     public LayerMask layerMask;
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
 
     Vector3 healthbarSize;
     // Start is called before the first frame update

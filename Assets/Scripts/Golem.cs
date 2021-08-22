@@ -12,9 +12,7 @@ public class Golem : Monster
         RangeAttack
     };
 
-    Rigidbody2D rigid;
     public State currentState = State.Idle;
-    SpriteRenderer spriteRenderer;
     public CapsuleCollider2D capsuleCollider;
     public Transform[] wallCheck;
     WaitForSeconds Delay = new WaitForSeconds(0.2f);
@@ -67,7 +65,7 @@ public class Golem : Monster
         while(runTime >= 0f){
             runTime -= Time.deltaTime;
             if(!isHit){
-                MyAnimSetTrigger("Walk");
+                MyAnimSetTrigger("Walking");
                 rb.velocity = new Vector2(-transform.localScale.x * moveSpeed, rb.velocity.y);
 
                 if(Physics2D.OverlapCircle(wallCheck[1].position, 0.01f, layerMask)){
@@ -107,7 +105,7 @@ public class Golem : Monster
             }
         }
         if(!Physics2D.OverlapCircle(wallCheck[1].position, 0.01f, layerMask) && Vector2.Distance(transform.position, PlayerData.Instance.Player.transform.position) < 7f){
-            MyAnimSetTrigger("Walk");
+            MyAnimSetTrigger("Walking");
             rb.velocity = new Vector2(-transform.localScale.x * moveSpeed, rb.velocity.y);
         }
         
