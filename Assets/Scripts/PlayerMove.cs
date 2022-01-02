@@ -207,7 +207,7 @@ public class PlayerMove : MonoBehaviour
 
         underAttack = true;
         
-        Invoke("OffDamaged", 3);
+        Invoke("OffDamaged", 1);
     }
 
     void OffDamaged()
@@ -222,6 +222,13 @@ public class PlayerMove : MonoBehaviour
         spriteRenderer.flipY = true;
         capsuleCollider.enabled = false;
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+
+    public void OffDie()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 1f);
+        spriteRenderer.flipY = false;
+        capsuleCollider.enabled = true;
     }
 
     public void VelocityZero()
